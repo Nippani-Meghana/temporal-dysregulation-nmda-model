@@ -2,6 +2,7 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+np.random.seed(0)
 
 # Parameters
 C = 1.0
@@ -191,8 +192,16 @@ schizo_isi_i = np.diff(spike_timings_i_Schizo)
 bins = np.linspace(7.5, 15, 20)  
 plt.figure(figsize=(12,6))
 plt.subplot(1,2,1)
-plt.hist(normal_isi_e,bins =bins,label = "Normal Excitatory Neuron", alpha = 0.5, color = 'deeppink')
-plt.hist(schizo_isi_e,bins =bins,label = "Schizophrenia Excitatory Neuron", alpha = 0.5,color = 'darkcyan')
+n1, bin1, p1 = plt.hist(normal_isi_e,bins =bins,label = "Normal Excitatory Neuron", alpha = 0.5, color = 'deeppink')
+n2, bin2, p2 = plt.hist(schizo_isi_e,bins =bins,label = "Schizophrenia Excitatory Neuron", alpha = 0.5,color = 'darkcyan')
+ax = plt.gca()
+bg = np.array(ax.get_facecolor()[:3])
+c1_rgba = p1[0].get_facecolor()
+c2_rgba = p2[0].get_facecolor()
+c1, a1 = np.array(c1_rgba[:3]), c1_rgba[3]
+c2, a2 = np.array(c2_rgba[:3]), c2_rgba[3]
+blend = c2*a2 + (c1*a1 + bg*(1-a1))*(1-a2)
+plt.fill_between([], [], [], color=blend, label='Overlap')
 plt.xlabel("Inter-Spike Interval (ms)")
 plt.ylabel("Frequency")
 plt.title("Excitatory Neuron ISI Distribution")
@@ -200,6 +209,7 @@ plt.legend()
 plt.subplot(1,2,2)
 plt.hist(normal_isi_i, bins=bins, label="Normal I", color='deeppink', alpha=0.5)
 plt.hist(schizo_isi_i, bins=bins, label="Schizo I", color='darkcyan', alpha=0.5)
+plt.fill_between([], [], [], color=blend, label='Overlap')
 plt.xlabel("Inter-Spike Interval (ms)")
 plt.ylabel("Frequency")
 plt.title("Inhibitory Neuron ISI Distribution")
